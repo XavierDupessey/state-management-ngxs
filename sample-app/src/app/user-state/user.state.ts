@@ -1,6 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { State } from '@ngxs/store';
+import { Action, State, StateContext } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { User } from './user.model';
+import { UserActions } from './user.actions';
 
 export interface UserStateModel {
   users: User[];
@@ -9,8 +13,17 @@ export interface UserStateModel {
 @State<UserStateModel>({
   name: 'user',
   defaults: {
-    users: [{ id: 1, name: 'Marty McFly' }],
+    users: [],
   },
 })
 @Injectable()
-export class UserState {}
+export class UserState {
+  constructor(private readonly httpClient: HttpClient) {}
+
+  @Action(UserActions.Load)
+  load({ patchState }: StateContext<UserStateModel>): Observable<unknown> {
+    return this.httpClient
+      .get<User[]>('https://jsonplaceholder.typicode.com/users')
+      .pipe(tap((users) => patchState({ users })));
+  }
+}
