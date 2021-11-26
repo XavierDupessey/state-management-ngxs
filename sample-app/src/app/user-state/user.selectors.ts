@@ -4,22 +4,22 @@ import { UserState, UserStateModel } from './user.state';
 
 export class UserSelectors {
   @Selector([UserState])
-  static premium(state: UserStateModel): User[] {
-    const premium = new Set(state.premiumIds);
-    return state.users.filter((user) => premium.has(user.id));
+  static premiumIdsSlice(state: UserStateModel): number[] {
+    return state.premiumIds;
+  }
+
+  @Selector([UserSelectors.premiumIdsSlice])
+  static premiumIdsSet(premiumIdsSlice: number[]): Set<number> {
+    return new Set(premiumIdsSlice);
+  }
+
+  @Selector([UserSelectors.premiumIdsSet, UserSelectors.usersSlice])
+  static premium(premiumIdsSet: Set<number>, usersSlice: User[]): User[] {
+    return usersSlice.filter((user) => premiumIdsSet.has(user.id));
   }
 
   @Selector([UserState])
-  static users(state: UserStateModel): User[] {
-    return state.users.map((user) => ({
-      ...user,
-      age: this.age(user.birthDate),
-    }));
-  }
-
-  private static age(birthDate: Date): number {
-    const ageDifMs = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  static usersSlice(state: UserStateModel): User[] {
+    return state.users;
   }
 }
