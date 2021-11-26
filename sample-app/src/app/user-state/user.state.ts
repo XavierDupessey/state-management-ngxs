@@ -8,12 +8,14 @@ import { UserActions } from './user.actions';
 import { User } from './user.model';
 
 export interface UserStateModel {
+  premiumIds: number[];
   users: User[];
 }
 
 @State<UserStateModel>({
   name: 'user',
   defaults: {
+    premiumIds: [1, 2, 3],
     users: [],
   },
 })

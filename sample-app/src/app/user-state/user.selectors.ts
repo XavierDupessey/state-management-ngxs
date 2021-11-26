@@ -4,6 +4,12 @@ import { UserState, UserStateModel } from './user.state';
 
 export class UserSelectors {
   @Selector([UserState])
+  static premium(state: UserStateModel): User[] {
+    const premium = new Set(state.premiumIds);
+    return state.users.filter((user) => premium.has(user.id));
+  }
+
+  @Selector([UserState])
   static users(state: UserStateModel): User[] {
     return state.users.map((user) => ({
       ...user,
