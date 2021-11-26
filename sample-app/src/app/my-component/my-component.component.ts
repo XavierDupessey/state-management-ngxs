@@ -9,9 +9,13 @@ import { UserSelectors } from '../user-state/user.selectors';
   template: `<table>
     <tr>
       <td>Name</td>
+      <td>Birthdate</td>
+      <td>Age</td>
     </tr>
     <tr *ngFor="let user of users$ | async">
       <td>{{ user.name }}</td>
+      <td>{{ user.birthDate | date }}</td>
+      <td>{{ user.age }}</td>
     </tr>
   </table>`,
 })
