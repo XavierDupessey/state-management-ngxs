@@ -16,6 +16,11 @@ export class UserSelectors {
         .filter((user) => user.age > age);
   }
 
+  @Selector([UserSelectors.overAgeFn])
+  static over25(overAgeFn: OverAgeFn): User[] {
+    return overAgeFn(25);
+  }
+
   private static age(birthDate: Date): number {
     const ageDifMs = Date.now() - birthDate.getTime();
     const ageDate = new Date(ageDifMs);
