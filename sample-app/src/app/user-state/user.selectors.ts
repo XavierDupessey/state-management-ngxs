@@ -2,24 +2,23 @@ import { Selector } from '@ngxs/store';
 import { User } from './user.model';
 import { UserState, UserStateModel } from './user.state';
 
+export type OverAgeFn = (age: number) => User[];
+
 export class UserSelectors {
   @Selector([UserState])
-  static premiumIdsSlice(state: UserStateModel): number[] {
-    return state.premiumIds;
+  static overAgeFn(state: UserStateModel): OverAgeFn {
+    return (age: number) =>
+      state.users
+        .map((user) => ({
+          ...user,
+          age: this.age(user.birthDate),
+        }))
+        .filter((user) => user.age > age);
   }
 
-  @Selector([UserSelectors.premiumIdsSlice])
-  static premiumIdsSet(premiumIdsSlice: number[]): Set<number> {
-    return new Set(premiumIdsSlice);
-  }
-
-  @Selector([UserSelectors.premiumIdsSet, UserSelectors.usersSlice])
-  static premium(premiumIdsSet: Set<number>, usersSlice: User[]): User[] {
-    return usersSlice.filter((user) => premiumIdsSet.has(user.id));
-  }
-
-  @Selector([UserState])
-  static usersSlice(state: UserStateModel): User[] {
-    return state.users;
+  private static age(birthDate: Date): number {
+    const ageDifMs = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
   }
 }

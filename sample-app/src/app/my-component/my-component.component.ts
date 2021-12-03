@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Store } from '@ngxs/store';
 import { User } from '../user-state/user.model';
 import { UserSelectors } from '../user-state/user.selectors';
 
@@ -11,14 +10,22 @@ import { UserSelectors } from '../user-state/user.selectors';
       <td>Id</td>
       <td>Name</td>
       <td>Birthdate</td>
+      <td>Age</td>
     </tr>
-    <tr *ngFor="let user of users$ | async">
+    <tr *ngFor="let user of over25">
       <td>{{ user.id }}</td>
       <td>{{ user.name }}</td>
       <td>{{ user.birthDate | date }}</td>
+      <td>{{ user.age }}</td>
     </tr>
   </table>`,
 })
 export class MyComponent {
-  @Select(UserSelectors.premium) readonly users$!: Observable<User[]>;
+  over25: User[] = [];
+
+  constructor(private readonly store: Store) {
+    this.store.select(UserSelectors.overAgeFn).subscribe((overAgeFn) => {
+      this.over25 = overAgeFn(25);
+    });
+  }
 }
