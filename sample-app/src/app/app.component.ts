@@ -1,13 +1,26 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { UserActions } from './user-state/user.actions';
 
 @Component({
   selector: 'app-root',
-  template: `<my-component></my-component>`,
+  template: `<ul>
+      <li *ngFor="let item of items">
+        <span>{{ item.id }}: </span>
+        <span>{{ item.name }}</span>
+      </li>
+    </ul>
+
+    <button (click)="update()">update</button>`,
 })
 export class AppComponent {
-  constructor(private readonly store: Store) {
-    this.store.dispatch(new UserActions.Load());
+  items = [
+    { id: 1, name: 'item 1' },
+    { id: 2, name: 'item 2 ' },
+  ];
+
+  update() {
+    this.items = [
+      { id: 1, name: 'item 1' },
+      { id: 2, name: this.items[1].name + '.' },
+    ];
   }
 }
